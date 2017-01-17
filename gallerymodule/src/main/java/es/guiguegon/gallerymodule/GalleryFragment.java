@@ -144,7 +144,7 @@ public class GalleryFragment extends Fragment
         GalleryMedia galleryMedia =
                 cameraHelper.onGetPictureIntentResults(requestCode, resultCode, data);
         if (galleryMedia != null) {
-            onGalleryMedia(galleryMedia);
+//            onGalleryMedia(galleryMedia);
         }
     }
 

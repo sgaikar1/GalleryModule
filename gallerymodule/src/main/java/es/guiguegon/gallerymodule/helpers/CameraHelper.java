@@ -13,6 +13,9 @@ import es.guiguegon.gallerymodule.BuildConfig;
 import es.guiguegon.gallerymodule.model.GalleryMedia;
 import es.guiguegon.gallerymodule.utils.FileUtils;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by guiguegon on 23/10/2015.
@@ -28,6 +31,7 @@ public class CameraHelper {
     private String mediaPath;
     private String mimeType;
     private Context context;
+    private long sizeOfMedia;
 
     private CameraHelper() {
     }
@@ -91,6 +95,7 @@ public class CameraHelper {
                 if (MIME_TYPE_VIDEO.equals(mimeType)) {
                     duration = getGalleryMediaDuration();
                 }
+                long size = getSizeOfMedia();
                 return GalleryMedia.create(0, mediaPath, mimeType, duration, 0);
             }
         }
@@ -111,6 +116,26 @@ public class CameraHelper {
             mediaScanIntent.setData(Uri.fromFile(new File(mediaPath)));
             context.sendBroadcast(mediaScanIntent);
         }
+    }
+
+    public long getSizeOfMedia() {
+        try {
+
+            InputStream inputStream = context.getContentResolver().openInputStream(mediaUri);
+
+            Log.i("TEST", "File Size: " + inputStream.available());
+
+            sizeOfMedia = inputStream.available();
+        } catch (FileNotFoundException fnfe) {
+
+            fnfe.printStackTrace();
+
+        } catch (IOException ioe) {
+
+            ioe.printStackTrace();
+
+        }
+        return sizeOfMedia;
     }
 }
 

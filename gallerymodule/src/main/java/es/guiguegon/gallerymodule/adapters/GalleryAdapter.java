@@ -10,12 +10,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import es.guiguegon.gallerymodule.R;
 import es.guiguegon.gallerymodule.model.GalleryMedia;
 import es.guiguegon.gallerymodule.utils.ImageUtils;
 import es.guiguegon.gallerymodule.utils.ScreenUtils;
 import es.guiguegon.gallerymodule.utils.TextureCameraPreview;
 import es.guiguegon.gallerymodule.utils.TimeUtils;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,7 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
     public ArrayList<GalleryMedia> getSelectedItems() {
         ArrayList<GalleryMedia> galleryMedias = new ArrayList<>();
         for (Integer position : getSelectedItemsPosition()) {
-            galleryMedias.add(this.galleryMedias.get(position - 1));
+            galleryMedias.add(this.galleryMedias.get(position));
         }
         return galleryMedias;
     }
@@ -72,9 +74,6 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v;
         switch (viewType) {
-            case VIEW_HOLDER_TYPE_HEADER:
-                v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_gallery_header, viewGroup, false);
-                return new GalleryHeaderViewHolder(v);
             case VIEW_HOLDER_TYPE_ITEM:
             default:
                 v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_gallery, viewGroup, false);
@@ -88,13 +87,9 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
             final ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
             StaggeredGridLayoutManager.LayoutParams sglayoutParams =
                     (StaggeredGridLayoutManager.LayoutParams) layoutParams;
-            if (viewHolder instanceof GalleryHeaderViewHolder) {
-                sglayoutParams.setFullSpan(true);
-                fill((GalleryHeaderViewHolder) viewHolder);
-            } else {
-                sglayoutParams.setFullSpan(false);
-                fill((GalleryItemViewHolder) viewHolder, galleryMedias.get(position - 1), position);
-            }
+
+            sglayoutParams.setFullSpan(false);
+            fill((GalleryItemViewHolder) viewHolder, galleryMedias.get(position), position);
             viewHolder.itemView.setLayoutParams(sglayoutParams);
         } catch (Exception e) {
             Log.e(TAG, "[onBindViewHolder] ", e);
@@ -113,7 +108,7 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return galleryMedias.size() + 1;
+        return galleryMedias.size();
     }
 
     public void fill(GalleryItemViewHolder galleryItemViewHolder, final GalleryMedia galleryMedia, int position) {
@@ -141,10 +136,6 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
         return isSelected(position) || getSelectedItemCount() < maxSelectedItems;
     }
 
-    public void fill(GalleryHeaderViewHolder galleryHeaderViewHolder) {
-        galleryHeaderViewHolder.galleryCameraLayout.setOnClickListener(
-                v -> onGalleryClickListenerWeak.get().onCameraClick());
-    }
 
     public interface OnGalleryClickListener {
         void onGalleryClick(GalleryMedia galleryMedia);
@@ -169,18 +160,6 @@ public class GalleryAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
             galleryItemSelected = v.findViewById(R.id.gallery_item_selected);
             galleryItem.getLayoutParams().width = itemWidth;
             galleryGradient.getLayoutParams().width = itemWidth;
-        }
-    }
-
-    public class GalleryHeaderViewHolder extends RecyclerView.ViewHolder {
-
-        FrameLayout galleryCameraLayout;
-        TextureCameraPreview galleryCameraPreview;
-
-        public GalleryHeaderViewHolder(View v) {
-            super(v);
-            galleryCameraLayout = (FrameLayout) v.findViewById(R.id.gallery_camera_layout);
-            galleryCameraPreview = (TextureCameraPreview) v.findViewById(R.id.gallery_camera_preview);
         }
     }
 }

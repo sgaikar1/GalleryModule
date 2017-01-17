@@ -140,6 +140,8 @@ public class GalleryHelper {
                         videoCursor.getColumnIndex(MediaStore.Video.Media.DATE_TAKEN);
                 int durationColumIndex =
                         videoCursor.getColumnIndex(MediaStore.Video.Media.DURATION);
+                int sizeColumIndex =
+                        videoCursor.getColumnIndex(MediaStore.Images.Media.SIZE);
                 videoCursor.moveToFirst();
                 int videoCount = videoCursor.getCount();
                 for (int i = 0; i < videoCount; i++) {

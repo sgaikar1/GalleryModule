@@ -12,7 +12,7 @@ import es.guiguegon.gallerymodule.utils.FileUtils;
 public abstract class GalleryMedia implements Comparable<GalleryMedia>, Parcelable {
 
     public static GalleryMedia create(long id, String mediaUri, String mimeType, long duration,
-            long dateTaken) {
+                                      long dateTaken) {
         return new AutoValue_GalleryMedia(id, mediaUri, mimeType, duration, dateTaken);
         }
 

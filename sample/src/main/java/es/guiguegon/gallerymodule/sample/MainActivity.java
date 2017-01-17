@@ -1,6 +1,7 @@
 package es.guiguegon.gallerymodule.sample;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +16,11 @@ import android.widget.Toast;
 import es.guiguegon.gallerymodule.GalleryActivity;
 import es.guiguegon.gallerymodule.GalleryHelper;
 import es.guiguegon.gallerymodule.model.GalleryMedia;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,6 +91,36 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Gallery Media selected: " + galleryMedias.size(),
                     Toast.LENGTH_LONG)
                     .show();
+            InputStream inputStream = null;
+            try {
+                inputStream = getContentResolver().openInputStream(Uri.fromFile(new File(galleryMedias.get(0).mediaUri())));
+
+                String value=null;
+                long Filesize=getFolderSize(new File(galleryMedias.get(0).mediaUri()))/1024;//call function and convert bytes into Kb
+                if(Filesize>=1024)
+                    value=Filesize/1024+" Mb";
+                else
+                    value=Filesize+" Kb";
+
+                Toast.makeText(this, "Gallery Media size of item: " +"Your File size is "+value,// inputStream.available(),
+                        Toast.LENGTH_LONG)
+                        .show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         }
+    }
+
+    public static long getFolderSize(File f) {
+        long size = 0;
+        if (f.isDirectory()) {
+            for (File file : f.listFiles()) {
+                size += getFolderSize(file);
+            }
+        } else {
+            size=f.length();
+        }
+        return size;
     }
 }
